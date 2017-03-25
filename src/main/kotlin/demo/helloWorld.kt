@@ -27,7 +27,7 @@ private fun extract(file: String, dest: String) {
 }
 
 fun main(args: Array<String>) {
-  val compareOther = true
+  val compareOther = false
   val compareClasses = true
   val compareMethodBodies = true
 
@@ -71,6 +71,7 @@ fun main(args: Array<String>) {
             diffClasses++
             File(diff, fileName.toString() + ".o.txt").writeText(o)
             File(diff, fileName.toString() + ".i.txt").writeText(s)
+            println("D " + inInc.toString())
           }
         }
       }
