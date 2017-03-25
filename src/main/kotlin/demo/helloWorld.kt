@@ -40,7 +40,7 @@ fun main(args: Array<String>) {
   diff.deleteRecursively()
   diff.mkdir()
 
-  val orig = File("build/classes").toPath()
+  val orig = File("orig").toPath()
   val inc = File("inc").toPath()
   var diffClasses = 0
   var allFiles = 0
