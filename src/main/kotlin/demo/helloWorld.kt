@@ -33,8 +33,8 @@ fun main(args: Array<String>) {
 
   val classMatcher = FileSystems.getDefault().getPathMatcher("glob:*.{class}")
 
-//  extract("orig.zip", "orig")
-//  extract("inc.zip", "inc")
+  extract("orig.zip", "orig")
+  extract("inc.zip", "inc")
 
   val diff = File("diff")
   diff.deleteRecursively()
@@ -64,9 +64,6 @@ fun main(args: Array<String>) {
       if (compareClasses && path != null && classMatcher.matches(fileName)) {
         classFiles++
 
-        
-        println(decompile(path, compareMethodBodies))
-        
         if (!inInc.toFile().exists()) println("M " + inInc.toString())
         else {
           val o = decompile(path, compareMethodBodies)
@@ -98,7 +95,7 @@ private fun decompile(path: Path?, compareMethodBodies: Boolean): String {
     try {
       val classReader = ClassReader(fileInputStream)
       val byteArrayOutputStream = ByteArrayOutputStream()
-      val value: ASMifier = object : ASMifier(Opcodes.ASM5, "cw", 0) {
+      val asmifier: ASMifier = object : ASMifier(Opcodes.ASM5, "cw", 0) {
         override fun createASMifier(name: String?, id: Int): ASMifier {
           return object : ASMifier(Opcodes.ASM5, name, id) {
             override fun getText(): MutableList<Any> {
