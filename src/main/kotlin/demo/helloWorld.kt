@@ -6,6 +6,7 @@ import jdk.internal.org.objectweb.asm.util.ASMifier
 import jdk.internal.org.objectweb.asm.util.Textifier
 import jdk.internal.org.objectweb.asm.util.TraceClassVisitor
 import net.lingala.zip4j.core.ZipFile
+import org.objectweb.asm.Opcodes.ASM5
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
@@ -95,16 +96,15 @@ private fun decompile(path: Path?, compareMethodBodies: Boolean): String {
     try {
       val classReader = ClassReader(fileInputStream)
       val byteArrayOutputStream = ByteArrayOutputStream()
-      val asmifier: ASMifier = object : ASMifier(Opcodes.ASM5, "cw", 0) {
-        override fun createASMifier(name: String?, id: Int): ASMifier {
-          return object : ASMifier(Opcodes.ASM5, name, id) {
-            override fun getText(): MutableList<Any> {
-              return if (compareMethodBodies) super.getText() else Arrays.asList()
-            }
-          }
+      val traceClassVisitor = TraceClassVisitor(null, object : Textifier(ASM5) {
+        override fun createTextifier(): Textifier {
+         return object : Textifier(ASM5) {
+           override fun getText(): MutableList<Any> {
+             return if (compareMethodBodies) super.getText() else Arrays.asList()
+           }
+         } 
         }
-      }
-      val traceClassVisitor = TraceClassVisitor(null, Textifier(), PrintWriter(byteArrayOutputStream))
+      }, PrintWriter(byteArrayOutputStream))
       classReader.accept(traceClassVisitor, ClassReader.SKIP_DEBUG and ClassReader.SKIP_CODE and ClassReader.SKIP_FRAMES)
       return byteArrayOutputStream.toString()
     }
