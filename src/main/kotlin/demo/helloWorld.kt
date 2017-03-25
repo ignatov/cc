@@ -28,7 +28,7 @@ private fun extract(file: String, dest: String) {
 fun main(args: Array<String>) {
   val compareOther = false
   val compareClasses = true
-  val compareMethodBodies = true
+  val compareMethodBodies = false
 
   val classMatcher = FileSystems.getDefault().getPathMatcher("glob:*.{class}")
 
