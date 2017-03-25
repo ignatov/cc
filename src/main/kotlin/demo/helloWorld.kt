@@ -5,7 +5,6 @@ import jdk.internal.org.objectweb.asm.Opcodes
 import jdk.internal.org.objectweb.asm.util.ASMifier
 import jdk.internal.org.objectweb.asm.util.TraceClassVisitor
 import net.lingala.zip4j.core.ZipFile
-import net.lingala.zip4j.model.ZipParameters
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
@@ -83,8 +82,6 @@ fun main(args: Array<String>) {
       return result
     }
   })
-
-  ZipFile("diff.zip").createZipFile(diff, ZipParameters())
 
   println(allFiles)
   println(classFiles)
