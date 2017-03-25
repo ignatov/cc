@@ -27,10 +27,12 @@ private fun extract(file: String, dest: String) {
 }
 
 fun main(args: Array<String>) {
-  val compareOther = false
+  val compareOther = true
   val compareClasses = true
+  val compareMethodBodies = true
+
   val classMatcher = FileSystems.getDefault().getPathMatcher("glob:*.{class}")
-  
+
   extract("orig.zip", "orig")
   extract("inc.zip", "inc")
 
@@ -63,8 +65,8 @@ fun main(args: Array<String>) {
         classFiles++
         if (!inInc.toFile().exists()) println("M " + inInc.toString())
         else {
-          val o = decompile(path)
-          val s = decompile(inInc)
+          val o = decompile(path, compareMethodBodies)
+          val s = decompile(inInc, compareMethodBodies)
           if (o != s) {
             diffClasses++
             File(diff, fileName.toString() + ".o.txt").writeText(o)
@@ -88,7 +90,7 @@ fun main(args: Array<String>) {
   println(diffClasses)
 }
 
-private fun decompile(path: Path?): String {
+private fun decompile(path: Path?, compareMethodBodies: Boolean): String {
   FileInputStream(path?.toFile()).use { fileInputStream ->
     try {
       val classReader = ClassReader(fileInputStream)
@@ -97,7 +99,7 @@ private fun decompile(path: Path?): String {
         override fun createASMifier(name: String?, id: Int): ASMifier {
           return object : ASMifier(Opcodes.ASM5, name, id) {
             override fun getText(): MutableList<Any> {
-              return Arrays.asList()
+              return if (compareMethodBodies) super.getText() else Arrays.asList()
             }
           }
         }
