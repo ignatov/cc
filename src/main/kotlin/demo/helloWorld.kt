@@ -67,8 +67,8 @@ fun main(args: Array<String>) {
 
         if (!inInc.toFile().exists()) println("M " + inInc.toString())
         else {
-          val o = decompile(path, compareMethodBodies)
-          val s = decompile(inInc, compareMethodBodies)
+          val o = decompile(path, compareMethodBodies).split("\n").sorted().joinToString("\n")
+          val s = decompile(inInc, compareMethodBodies).split("\n").sorted().joinToString("\n")
           if (o != s) {
             diffClasses++
             File(diff, fileName.toString() + ".o.txt").writeText(o)
