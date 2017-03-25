@@ -3,6 +3,7 @@ package demo
 import jdk.internal.org.objectweb.asm.ClassReader
 import jdk.internal.org.objectweb.asm.Opcodes
 import jdk.internal.org.objectweb.asm.util.ASMifier
+import jdk.internal.org.objectweb.asm.util.Textifier
 import jdk.internal.org.objectweb.asm.util.TraceClassVisitor
 import net.lingala.zip4j.core.ZipFile
 import java.io.ByteArrayOutputStream
@@ -32,14 +33,14 @@ fun main(args: Array<String>) {
 
   val classMatcher = FileSystems.getDefault().getPathMatcher("glob:*.{class}")
 
-  extract("orig.zip", "orig")
-  extract("inc.zip", "inc")
+//  extract("orig.zip", "orig")
+//  extract("inc.zip", "inc")
 
   val diff = File("diff")
   diff.deleteRecursively()
   diff.mkdir()
 
-  val orig = File("orig").toPath()
+  val orig = File("build/classes").toPath()
   val inc = File("inc").toPath()
   var diffClasses = 0
   var allFiles = 0
@@ -62,6 +63,10 @@ fun main(args: Array<String>) {
       val fileName: Path? = path?.fileName
       if (compareClasses && path != null && classMatcher.matches(fileName)) {
         classFiles++
+
+        
+        println(decompile(path, compareMethodBodies))
+        
         if (!inInc.toFile().exists()) println("M " + inInc.toString())
         else {
           val o = decompile(path, compareMethodBodies)
@@ -93,7 +98,7 @@ private fun decompile(path: Path?, compareMethodBodies: Boolean): String {
     try {
       val classReader = ClassReader(fileInputStream)
       val byteArrayOutputStream = ByteArrayOutputStream()
-      val traceClassVisitor = TraceClassVisitor(null, object : ASMifier(Opcodes.ASM5, "cw", 0) {
+      val value: ASMifier = object : ASMifier(Opcodes.ASM5, "cw", 0) {
         override fun createASMifier(name: String?, id: Int): ASMifier {
           return object : ASMifier(Opcodes.ASM5, name, id) {
             override fun getText(): MutableList<Any> {
@@ -101,8 +106,9 @@ private fun decompile(path: Path?, compareMethodBodies: Boolean): String {
             }
           }
         }
-      }, PrintWriter(byteArrayOutputStream))
-      classReader.accept(traceClassVisitor, ClassReader.SKIP_DEBUG)
+      }
+      val traceClassVisitor = TraceClassVisitor(null, Textifier(), PrintWriter(byteArrayOutputStream))
+      classReader.accept(traceClassVisitor, ClassReader.SKIP_DEBUG and ClassReader.SKIP_CODE and ClassReader.SKIP_FRAMES)
       return byteArrayOutputStream.toString()
     }
     catch(e: Exception) {
