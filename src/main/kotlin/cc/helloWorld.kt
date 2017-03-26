@@ -1,4 +1,4 @@
-package demo
+package cc
 
 import jdk.internal.org.objectweb.asm.ClassReader
 import jdk.internal.org.objectweb.asm.util.Textifier
