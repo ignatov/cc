@@ -14,7 +14,7 @@ apply plugin: 'kotlin'
 apply plugin: 'application'
 apply plugin: "com.github.johnrengelman.shadow"
 
-mainClassName = 'cc.HelloWorldKt'
+mainClassName = 'cc.CcKt'
 
 defaultTasks 'run'
 
