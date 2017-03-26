@@ -38,10 +38,12 @@ fun main(args: Array<String>) {
   val diff = File("diff")
   diff.deleteRecursively()
   diff.mkdir()
+  val diffClasses = File(diff, "classes")
+  diffClasses.mkdir()
 
   val orig = File("orig").toPath()
   val inc = File("inc").toPath()
-  var diffClasses = 0
+  var diffClassesCount = 0
   var allFiles = 0
   var classFiles = 0
   walkFileTree(orig, object : SimpleFileVisitor<Path>() {
@@ -68,9 +70,12 @@ fun main(args: Array<String>) {
           val o = decompile(path, compareMethodBodies)
           val s = decompile(inInc, compareMethodBodies)
           if (sortAndTrim(o) != sortAndTrim(s)) {
-            diffClasses++
-            File(diff, fileName.toString() + ".o.txt").writeText(o)
-            File(diff, fileName.toString() + ".i.txt").writeText(s)
+            diffClassesCount++
+            val fn = fileName.toString()
+            File(diff, fn + ".o.txt").writeText(o)
+            File(diff, fn + ".i.txt").writeText(s)
+            path.toFile().copyTo(File(diffClasses, fn + ".o.class"))
+            inInc.toFile().copyTo(File(diffClasses, fn + ".i.class"))
             println("D " + inInc.toString())
           }
         }
@@ -88,7 +93,7 @@ fun main(args: Array<String>) {
 
   println(allFiles)
   println(classFiles)
-  println(diffClasses)
+  println(diffClassesCount)
 }
 
 private fun decompile(path: Path?, compareMethodBodies: Boolean): String {
