@@ -86,7 +86,9 @@ fun main(args: Array<String>) {
 
   tc("$allFiles files")
   tc("$classFiles total class files")
-  status("$diffClassesCount different class files")
+  val message = "$diffClassesCount different class files"
+  tc(message)
+  status(message)
 }
 
 private fun tc(message: Any?, status: String = "WARNING") {
