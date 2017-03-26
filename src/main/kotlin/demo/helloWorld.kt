@@ -65,7 +65,7 @@ fun main(args: Array<String>) {
       if (compareClasses && path != null && classMatcher.matches(fileName)) {
         classFiles++
 
-        if (!inInc.toFile().exists()) tc("M " + inInc.toString(), "WARNING")
+        if (!inInc.toFile().exists()) tc("M " + inInc.toString())
         else {
           val o = decompile(path, compareMethodBodies)
           val s = decompile(inInc, compareMethodBodies)
@@ -76,13 +76,13 @@ fun main(args: Array<String>) {
             File(diff, fn + ".i.txt").writeText(s)
             path.toFile().copyTo(File(diffClasses, fn + ".o.class"))
             inInc.toFile().copyTo(File(diffClasses, fn + ".i.class"))
-            tc("D " + inInc.toString(), "WARNING")
+            tc("D " + inInc.toString())
           }
         }
       }
       else if (compareOther) {
-        if (!inInc.toFile().exists()) tc("M " + inInc.toString(), "WARNING")
-        else if (!Arrays.equals(readAllBytes(path), readAllBytes(inInc))) tc("D " + inInc.toString(), "WARNING")
+        if (!inInc.toFile().exists()) tc("M " + inInc.toString())
+        else if (!Arrays.equals(readAllBytes(path), readAllBytes(inInc))) tc("D " + inInc.toString())
       }
 
       return result
@@ -93,10 +93,10 @@ fun main(args: Array<String>) {
 
   tc("$allFiles files")
   tc("$classFiles total class files")
-  tc("$diffClassesCount different classes")
+  tc("$diffClassesCount different class files", if (diffClassesCount > 0) "ERROR" else "WARNING")
 }
 
-private fun tc(message: Any?, status: String = "NORMAL") {
+private fun tc(message: Any?, status: String = "WARNING") {
   println("##teamcity[message text='$message' status='$status']")
 }
 
