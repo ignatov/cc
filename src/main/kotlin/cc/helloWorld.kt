@@ -18,13 +18,6 @@ import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
 
-private fun extract(file: String, dest: String) {
-  println("deleting $dest")
-  File(dest).delete()
-  println("extracting $file")
-  ZipFile(file).extractAll(dest)
-}
-
 fun main(args: Array<String>) {
   val compareOther = false
   val compareClasses = true
@@ -130,4 +123,11 @@ private fun decompile(path: Path?, compareMethodBodies: Boolean): String {
       return "<null>"
     }
   }
+}
+
+private fun extract(file: String, dest: String) {
+  println("deleting $dest")
+  File(dest).delete()
+  println("extracting $file")
+  ZipFile(file).extractAll(dest)
 }
