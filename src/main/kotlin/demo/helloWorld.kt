@@ -1,8 +1,6 @@
 package demo
 
 import jdk.internal.org.objectweb.asm.ClassReader
-import jdk.internal.org.objectweb.asm.Opcodes
-import jdk.internal.org.objectweb.asm.util.ASMifier
 import jdk.internal.org.objectweb.asm.util.Textifier
 import jdk.internal.org.objectweb.asm.util.TraceClassVisitor
 import net.lingala.zip4j.core.ZipFile
@@ -67,9 +65,9 @@ fun main(args: Array<String>) {
 
         if (!inInc.toFile().exists()) println("M " + inInc.toString())
         else {
-          val o = decompile(path, compareMethodBodies).split("\n").sorted().joinToString("\n")
-          val s = decompile(inInc, compareMethodBodies).split("\n").sorted().joinToString("\n")
-          if (o != s) {
+          val o = decompile(path, compareMethodBodies)
+          val s = decompile(inInc, compareMethodBodies)
+          if (sortAndTrim(o) != sortAndTrim(s)) {
             diffClasses++
             File(diff, fileName.toString() + ".o.txt").writeText(o)
             File(diff, fileName.toString() + ".i.txt").writeText(s)
@@ -84,6 +82,8 @@ fun main(args: Array<String>) {
 
       return result
     }
+
+    private fun sortAndTrim(o: String) = o.split("\n").sorted().joinToString("\n")
   })
 
   println(allFiles)
