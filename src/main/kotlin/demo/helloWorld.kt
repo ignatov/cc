@@ -65,7 +65,7 @@ fun main(args: Array<String>) {
       if (compareClasses && path != null && classMatcher.matches(fileName)) {
         classFiles++
 
-        if (!inInc.toFile().exists()) println("M " + inInc.toString())
+        if (!inInc.toFile().exists()) tc("M " + inInc.toString(), "WARNING")
         else {
           val o = decompile(path, compareMethodBodies)
           val s = decompile(inInc, compareMethodBodies)
@@ -76,13 +76,13 @@ fun main(args: Array<String>) {
             File(diff, fn + ".i.txt").writeText(s)
             path.toFile().copyTo(File(diffClasses, fn + ".o.class"))
             inInc.toFile().copyTo(File(diffClasses, fn + ".i.class"))
-            println("D " + inInc.toString())
+            tc("D " + inInc.toString(), "WARNING")
           }
         }
       }
       else if (compareOther) {
-        if (!inInc.toFile().exists()) println("M " + inInc.toString())
-        else if (!Arrays.equals(readAllBytes(path), readAllBytes(inInc))) println("D " + inInc.toString())
+        if (!inInc.toFile().exists()) tc("M " + inInc.toString(), "WARNING")
+        else if (!Arrays.equals(readAllBytes(path), readAllBytes(inInc))) tc("D " + inInc.toString(), "WARNING")
       }
 
       return result
@@ -91,9 +91,13 @@ fun main(args: Array<String>) {
     private fun sortAndTrim(o: String) = o.split("\n").sorted().joinToString("\n")
   })
 
-  println(allFiles)
-  println(classFiles)
-  println(diffClassesCount)
+  tc("$allFiles files")
+  tc("$classFiles total class files")
+  tc("$diffClassesCount different classes")
+}
+
+private fun tc(message: Any?, status: String = "NORMAL") {
+  println("##teamcity[message text='$message' status='$status']")
 }
 
 private fun decompile(path: Path?, compareMethodBodies: Boolean): String {
