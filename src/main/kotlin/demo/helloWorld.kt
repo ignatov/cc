@@ -93,11 +93,15 @@ fun main(args: Array<String>) {
 
   tc("$allFiles files")
   tc("$classFiles total class files")
-  tc("$diffClassesCount different class files", if (diffClassesCount > 0) "ERROR" else "WARNING")
+  status("$diffClassesCount different class files")
 }
 
 private fun tc(message: Any?, status: String = "WARNING") {
   println("##teamcity[message text='$message' status='$status']")
+}
+
+private fun status(message: Any?, status: String = "WARNING") {
+  println("##teamcity[buildStatus text='$message' status='$status']")
 }
 
 private fun decompile(path: Path?, compareMethodBodies: Boolean): String {
