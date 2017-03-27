@@ -81,7 +81,11 @@ fun main(args: Array<String>) {
       return result
     }
 
-    private fun sortAndTrim(o: String) = o.split("\n").sorted().joinToString("\n")
+    private fun sortAndTrim(o: String) = o
+        .split("\n")
+        .map({ it.replace("  implements groovy/lang/GroovyObject", "") })
+        .sorted()
+        .joinToString("\n")
   })
 
   tc("$allFiles files")
