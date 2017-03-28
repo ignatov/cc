@@ -83,6 +83,8 @@ fun main(args: Array<String>) {
 
     private fun sortAndTrim(o: String) = o
         .split("\n")
+        .filter { !it.contains("private transient synthetic Lgroovy/lang/MetaClass; metaClass") }
+        .filter { !it.contains("// access flags [x\\d]+") }
         .map({ it.replace("  implements groovy/lang/GroovyObject", "") })
         .sorted()
         .joinToString("\n")
