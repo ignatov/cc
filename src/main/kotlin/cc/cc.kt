@@ -90,9 +90,13 @@ fun main(args: Array<String>) {
 
   tc("$allFiles files")
   tc("$classFiles total class files")
+  val error = diffClassesCount > 0
+  val severity = if (error) "ERROR" else "WARNING" 
   val message = "$diffClassesCount different class files"
-  tc(message)
-  status(message)
+  tc(message, severity)
+  if (error) {
+    status(message, severity)
+  }
 }
 
 private fun tc(message: Any?, status: String = "WARNING") {
