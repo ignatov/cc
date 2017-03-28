@@ -80,14 +80,6 @@ fun main(args: Array<String>) {
 
       return result
     }
-
-    private fun sortAndTrim(o: String) = o
-        .split("\n")
-        .filter { !it.contains("private transient synthetic Lgroovy/lang/MetaClass; metaClass") }
-        .filter { !it.contains("// access flags [x\\d]+") }
-        .map({ it.replace("  implements groovy/lang/GroovyObject", "") })
-        .sorted()
-        .joinToString("\n")
   })
 
   tc("$allFiles files")
@@ -100,6 +92,14 @@ fun main(args: Array<String>) {
     status(message, severity)
   }
 }
+
+private fun sortAndTrim(o: String) = o
+    .split("\n")
+    .filter { !it.contains("private transient synthetic Lgroovy/lang/MetaClass; metaClass") }
+    .filter { !it.contains("// access flags") }
+    .map({ it.replace("  implements groovy/lang/GroovyObject", "") })
+    .sorted()
+    .joinToString("\n")
 
 private fun tc(message: Any?, status: String = "WARNING") {
   println("##teamcity[message text='$message' status='$status']")
