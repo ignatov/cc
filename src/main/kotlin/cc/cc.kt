@@ -25,8 +25,8 @@ fun main(args: Array<String>) {
 
   val classMatcher = FileSystems.getDefault().getPathMatcher("glob:*.{class}")
 
-  extract("orig.zip", "orig")
-  extract("inc.zip", "inc")
+//  extract("orig.zip", "orig")
+//  extract("inc.zip", "inc")
 
   val diff = File("diff")
   diff.deleteRecursively()
@@ -34,8 +34,8 @@ fun main(args: Array<String>) {
   val diffClasses = File(diff, "classes")
   diffClasses.mkdir()
 
-  val orig = File("orig").toPath()
-  val inc = File("inc").toPath()
+  val orig = File("o").toPath()
+  val inc = File("i").toPath()
   var diffClassesCount = 0
   var allFiles = 0
   var classFiles = 0
@@ -98,6 +98,7 @@ private fun sortAndTrim(o: String) = o
     .filter { !it.contains("private transient synthetic Lgroovy/lang/MetaClass; metaClass") }
     .filter { !it.contains("// access flags") }
     .map({ it.replace("  implements groovy/lang/GroovyObject", "") })
+    .filter { !it.isEmpty() }
     .sorted()
     .joinToString("\n")
 
