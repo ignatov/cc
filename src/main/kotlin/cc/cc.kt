@@ -97,6 +97,7 @@ private fun sortAndTrim(o: String) = o
     .split("\n")
     .filter { !it.contains("private transient synthetic Lgroovy/lang/MetaClass; metaClass") }
     .filter { !it.contains("// access flags") }
+    .filter { !it.contains("synthetic ") }
     .map({ it.replace("  implements groovy/lang/GroovyObject", "") })
     .map({ if (it.contains("implements") && it.contains(" groovy/lang/GroovyObject")) it.replace(" groovy/lang/GroovyObject", "") else it })
     .filter { !it.isEmpty() }
