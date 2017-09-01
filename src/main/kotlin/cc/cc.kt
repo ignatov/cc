@@ -19,9 +19,9 @@ import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
 
 fun main(args: Array<String>) {
-  val compareOther = false
   val compareClasses = true
-  val compareMethodBodies = false
+  val compareOther = System.getProperty("compare.other").toBoolean()
+  val compareMethodBodies = System.getProperty("compare.methods").toBoolean() 
 
   val classMatcher = FileSystems.getDefault().getPathMatcher("glob:*.{class}")
 
