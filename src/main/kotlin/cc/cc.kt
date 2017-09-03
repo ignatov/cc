@@ -42,7 +42,7 @@ fun main(args: Array<String>) {
   walkFileTree(orig, object : SimpleFileVisitor<Path>() {
     override fun preVisitDirectory(dir: Path?, attrs: BasicFileAttributes?): FileVisitResult {
       if (orig.relativize(dir).nameCount == 2) {
-        println(dir)
+        status(dir)
       }
       return super.preVisitDirectory(dir, attrs)
     }
@@ -93,7 +93,7 @@ fun main(args: Array<String>) {
     System.exit(1)
   }
   else {
-    status("$classFiles total class files", "SUCCESS")
+    status("Compared $classFiles classes")
   }
 }
 
@@ -114,8 +114,10 @@ private fun tc(message: Any?, status: String = "WARNING") {
   println("##teamcity[message text='$message' status='$status']")
 }
 
-private fun status(message: Any?, status: String = "WARNING") {
-  println("##teamcity[buildStatus text='$message' status='$status']")
+private fun status(message: Any?, status: String? = null) {
+  println(
+      if (status == null) "##teamcity[buildStatus text='$message']"
+      else "##teamcity[buildStatus text='$message' status='$status']")
 }
 
 private fun decompile(path: Path?, compareMethodBodies: Boolean): String {
