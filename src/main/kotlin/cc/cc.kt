@@ -36,7 +36,7 @@ fun main(args: Array<String>) {
 
   val orig = File("orig").toPath()
   val inc = File("inc").toPath()
-  var diffClassesCount = 0
+  val diffClassNames = ArrayList<String>()
   var allFiles = 0
   var classFiles = 0
   walkFileTree(orig, object : SimpleFileVisitor<Path>() {
@@ -63,8 +63,8 @@ fun main(args: Array<String>) {
           val o = decompile(path, compareMethodBodies)
           val s = decompile(inInc, compareMethodBodies)
           if (sortAndTrim(o) != sortAndTrim(s)) {
-            diffClassesCount++
             val fn = fileName.toString()
+            diffClassNames.add(fn)
             File(diff, fn + ".o.txt").writeText(o)
             File(diff, fn + ".i.txt").writeText(s)
             path.toFile().copyTo(File(diffClasses, fn + ".o.class"))
@@ -84,12 +84,15 @@ fun main(args: Array<String>) {
 
   tc("$allFiles files")
   tc("$classFiles total class files")
-  val error = diffClassesCount > 0
+  val error = diffClassNames.isNotEmpty()
   val severity = if (error) "ERROR" else "WARNING" 
-  val message = "$diffClassesCount different class files"
+  val message = "${diffClassNames.size} different classes: " + diffClassNames.take(10).joinToString()
   tc(message, severity)
   if (error) {
     status(message, severity)
+  }
+  else {
+    status("$classFiles total class files", "SUCCESS")
   }
 }
 
