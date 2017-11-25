@@ -85,11 +85,12 @@ fun main(args: Array<String>) {
   tc("$allFiles files")
   tc("$classFiles total class files")
   val error = diffClassNames.isNotEmpty()
-  val severity = if (error) "ERROR" else "WARNING" 
+  val severity = if (error) "ERROR" else "WARNING"
   val message = "${diffClassNames.size} different classes: " + diffClassNames.take(10).joinToString()
   tc(message, severity)
   if (error) {
     status(message, severity)
+    System.exit(1)
   }
   else {
     status("$classFiles total class files", "SUCCESS")
