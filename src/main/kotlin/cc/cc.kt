@@ -134,6 +134,9 @@ private fun decompile(path: Path?, compareMethodBodies: Boolean): String {
 
         override fun visitSource(file: String?, debug: String?) { // don't print debug info from Kotlin
         }
+
+        override fun visitInnerClass(p0: String?, p1: String?, p2: String?, p3: Int) { // don't print public static abstract INNERCLASS *
+        }
       }, PrintWriter(byteArrayOutputStream))
       classReader.accept(traceClassVisitor, ClassReader.SKIP_DEBUG and ClassReader.SKIP_CODE and ClassReader.SKIP_FRAMES)
       return byteArrayOutputStream.toString()
