@@ -101,6 +101,8 @@ private fun sortAndTrim(o: String) = o
     .split("\n")
     .filter { !it.contains("private transient synthetic Lgroovy/lang/MetaClass; metaClass") }
     .filter { !it.contains("// access flags") }
+    .filter { !it.contains("// signature") }
+    .filter { !it.contains("// declaration") }
     .filter { !it.contains("synthetic ") }
     .filter { !it.contains("@Lkotlin/Metadata;") }
     .filter { !it.contains("    LOCALVARIABLE ") }
