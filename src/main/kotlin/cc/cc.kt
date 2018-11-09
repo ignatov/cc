@@ -17,6 +17,7 @@ import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
+import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
   val compareClasses = true
@@ -25,8 +26,12 @@ fun main(args: Array<String>) {
 
   val classMatcher = FileSystems.getDefault().getPathMatcher("glob:*.{class}")
 
-  extract("orig.zip", "orig")
-  extract("inc.zip", "inc")
+  if (args.size < 2) {
+    error(2, "Expected two arguments: <orig> <inc>")
+  }
+
+  val orig: Path = getOrExtract(args[0])
+  val inc: Path = getOrExtract(args[1])
 
   val diff = File("diff")
   diff.deleteRecursively()
@@ -34,8 +39,6 @@ fun main(args: Array<String>) {
   val diffClasses = File(diff, "classes")
   diffClasses.mkdir()
 
-  val orig = File("orig").toPath()
-  val inc = File("inc").toPath()
   val diffClassNames = ArrayList<String>()
   var allFiles = 0
   var classFiles = 0
@@ -90,11 +93,28 @@ fun main(args: Array<String>) {
   tc(message, severity)
   if (error) {
     status(message, severity)
-    System.exit(1)
+    error(1, message)
   }
   else {
     status("Compared $classFiles classes")
   }
+}
+
+fun getOrExtract(path: String): Path {
+  val file = File(path)
+  if (!file.exists()) error(2, "'$path' does not exists, expected directory or zip file")
+  if (file.isDirectory) return file.toPath()
+  if (file.isFile && file.extension in listOf("zip", "jar")) {
+    val dest = File(file.parentFile, file.nameWithoutExtension)
+    extract(file.absolutePath, dest.absolutePath)
+    return dest.toPath()
+  }
+  error(2, "'$path' have unsupported archive type, expected directory or zip file")
+}
+
+fun error(code: Int, message: String): Nothing {
+  System.err.println(message)
+  exitProcess(code)
 }
 
 private fun sortAndTrim(o: String) = o
